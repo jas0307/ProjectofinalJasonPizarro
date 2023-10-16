@@ -11,7 +11,7 @@ this.observacion=observacion
 
 }
 //Inventario inicial
-let lista = new Inmueble ("Item","Nombre","Marca","Stock","Precio","Lugar","Observación")
+let list = new Inmueble ("Item","Nombre","Marca","Stock","Precio","Lugar","Observación")
 let bien1 = new Inmueble (0,"pc","acer",5,350000,"sala de computacion","sin observación")
 let bien2 = new Inmueble (1,"pc","lenovo",4,450000,"sala de profesores","pc 2 sin pantalla")
 let bien3 = new Inmueble (2,"escritorio","ikea",5,100000,"sala de computacion","sin observación")
@@ -44,9 +44,9 @@ function filtrarInventario(){ //funcion para filtrar
         return
 }
         // Inserta celdas en la fila
-        for (let x in lista) {
+        for (let x in list) {
             const celda = newRow.insertCell();
-            celda.textContent = lista[x];
+            celda.textContent = list[x];
           }
             resultado.forEach((producto) => {
             const row = resultadoTable.insertRow();
@@ -74,89 +74,110 @@ function filtrarInventario(){ //funcion para filtrar
 
 
     function agregarProducto() { 
+      
+      agregarBtn.disabled = true;
+      let ultimoItem = inventario[inventario.length - 1].item
+      let itemInput = ultimoItem +1 //aumenta al siguiente item creado
         const form = document.createElement('form'); //creo un for inyectado desde js
         form.innerHTML = 
         `
           <label for="nombre-input">Nombre:</label>
           <input id="nombre-input" type="text" required>
-          
-          <label for="precio-input">Precio:</label>
-          <input id="precio-input" type="number" step="1" required>
-          
+
+          <label for="marca-input">Marca:</label>
+          <input id="marca-input" type="text" required>
+      
           <label for="stock-input">Stock:</label>
           <input id="stock-input" type="number" step="1" required>
+
+          <label for="precio-input">Precio:</label>
+          <input id="precio-input" type="number" step="1" required>
+
+          <label for="lugar-input">Lugar:</label>
+          <input id="lugar-input" type="text" required>
+
+          <label for="observacion-input">Observación:</label>
+          <input id="observacion-input" type="text" required>
           
           <button type="submit">Agregar</button>
         `;
+        const body = document.querySelector('body');
+        body.appendChild(form);  //agrego la card nueva al body
        
-
         form.addEventListener('submit', function (event) { //el boton que envia, evalua si todo esta ok
           event.preventDefault();
-      
+          agregarBtn.disabled = false;
           //IMPORTANTE! estos "id" refieren a los inyectados en el form de arriba (no vienen del html)
           const nombreInput = document.getElementById('nombre-input').value.trim();
+          const marcaInput = document.getElementById('marca-input').value.trim();
           const precioInput = parseFloat(document.getElementById('precio-input').value);
           const stockInput = parseInt(document.getElementById('stock-input').value);
+          const lugarInput = document.getElementById('lugar-input').value.trim();
+          const observacionInput = document.getElementById('observacion-input').value.trim();
       
           if (isNaN(precioInput) || isNaN(stockInput) || nombreInput === '') { //valido los input
             alert('Por favor ingresa valores válidos.');
             return;
           }
       
-          const producto = new Producto(nombreInput, precioInput, stockInput); //si esta ok, creo un producto nuevo
+          const producto = new Inmueble(itemInput,nombreInput,marcaInput, stockInput, precioInput, lugarInput,observacionInput); //si esta ok, creo un producto nuevo
       
           //busco si hay un elemento existente que se llame igual al que cree
-          if (lista.some((elemento) => elemento.nombre === producto.nombre)) {
+          if (inventario.some((elemento) => elemento.nombre === producto.nombre)) {
             alert('El producto ya existe en la lista.');
             return;
           }
       
-          lista.push(producto); //si no esta en la lista, lo pusheo
+          inventario.push(producto); //si no esta en la lista, lo pusheo
       
       
     
           //aca agrego el producto creado en el storage
-          localStorage.setItem("productos", JSON.stringify(lista));
+          localStorage.setItem("productos", JSON.stringify(inventario));
       
           alert(`Se ha agregado el producto "${producto.nombre}" a la lista.`);
       
-          console.table(lista); //lo muestro por consola
+          console.table(inventario); //lo muestro por consola
       
-    
-    
-    
           //cuando creo y pusheo el producto nuevo, lo muestro en la pantalla creando una card nueva
-          const container = document.createElement('div');
-          container.classList.add('card-container');
-      
-          lista.forEach((producto) => {
-            const card = document.createElement('div');
-            card.classList.add('card');
-      
-            const nombre = document.createElement('h2');
-            nombre.textContent = producto.nombre;
-            card.appendChild(nombre);
-      
-            const precio = document.createElement('p');
-            precio.textContent = `Precio: ${producto.precio}`;
-            card.appendChild(precio);
-      
-            const stock = document.createElement('p');
-            stock.textContent = `Stock: ${producto.stock}`;
-            card.appendChild(stock);
-      
-            container.appendChild(card);
+          
+          
+          const resultadoTable = document.getElementById('resultado');
+          resultadoTable.innerHTML = ''; // Elimina contenido previo de la tabla
+    
+    
+          const newRow = resultadoTable.insertRow();
+        
+        // Inserta celdas en la fila
+        for (let x in list) {
+          const celda = newRow.insertCell();
+          celda.textContent = list[x];
+        }
+            inventario.forEach((producto) => {
+            const row = resultadoTable.insertRow();
+            const itemCell = row.insertCell(0);
+            const nombreCell = row.insertCell(1);
+            const marcaCell = row.insertCell(2);
+            const stockCell = row.insertCell(3);
+            const precioCell = row.insertCell(4);
+            const lugarCell = row.insertCell(5);
+            const observacionCell = row.insertCell(6);
+            
+            itemCell.textContent = producto.item;
+            nombreCell.textContent = producto.nombre;
+            marcaCell.textContent = producto.marca;
+            stockCell.textContent = producto.stock;
+            precioCell.textContent = producto.precio;
+            lugarCell.textContent = producto.lugar;
+            observacionCell.textContent = producto.observacion;       
           });
-      
-          const body = document.querySelector('body');
-          body.appendChild(container);
-      
           form.reset();
-        });
+          form.remove();
+        
+      });
       
-        const body = document.querySelector('body');
-        body.appendChild(form);  //agrego la card nueva al body
-      } 
+        
+        }
     
  
 
