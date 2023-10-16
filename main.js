@@ -22,17 +22,32 @@ let bien7 = new Inmueble (6,"libro ciencias","editorial planeta",39,32000,"bibli
 
 let inventario = [bien1,bien2,bien3,bien4,bien5,bien6,bien7]
 
+const datos = localStorage.getItem("Inmueble");
+console.log(datos)
+if (datos) {
+  // Convierte los datos en un array de objetos
+  const bienesEnLocalStorage = JSON.parse(datos);
+        // Agrega el bien al inventario
+  
+  inventario = bienesEnLocalStorage;
+}
+
+  
 const filtrarBtn = document.getElementById("filtrar");
 filtrarBtn.addEventListener("click", () => {filtrarInventario();});
 
 const agregarBtn = document.getElementById("agregar");
 agregarBtn.addEventListener("click", () => {agregarProducto();});
 
+
+
 function filtrarInventario(){ //funcion para filtrar
- 
+  
+
   const input = document.getElementById('filtrarP').value;
   const palabraClave = input.trim().toUpperCase();
   const resultado = inventario.filter((producto) => producto.nombre.toUpperCase().includes(palabraClave));
+console.log(resultado)
 
     const resultadoTable = document.getElementById('resultado');
     resultadoTable.innerHTML = ''; // Elimina contenido previo de la tabla
@@ -75,39 +90,48 @@ function filtrarInventario(){ //funcion para filtrar
 
     function agregarProducto() { 
       
-      agregarBtn.disabled = true;
-      let ultimoItem = inventario[inventario.length - 1].item
+      agregarBtn.disabled = true;//deshabilito boton de agregar
+
+      let ultimoItem = inventario[inventario.length - 1].item 
       let itemInput = ultimoItem +1 //aumenta al siguiente item creado
-        const form = document.createElement('form'); //creo un for inyectado desde js
+        const form = document.createElement('form'); //creo un formulario inyectado desde js
         form.innerHTML = 
         `
           <label for="nombre-input">Nombre:</label>
           <input id="nombre-input" type="text" required>
-
           <label for="marca-input">Marca:</label>
           <input id="marca-input" type="text" required>
-      
           <label for="stock-input">Stock:</label>
           <input id="stock-input" type="number" step="1" required>
-
           <label for="precio-input">Precio:</label>
           <input id="precio-input" type="number" step="1" required>
-
           <label for="lugar-input">Lugar:</label>
           <input id="lugar-input" type="text" required>
-
           <label for="observacion-input">Observación:</label>
-          <input id="observacion-input" type="text" required>
-          
+          <input id="observacion-input" type="text" required>       
           <button type="submit">Agregar</button>
+          <button id="cancelar">Cancelar</button>
         `;
-        const body = document.querySelector('body');
-        body.appendChild(form);  //agrego la card nueva al body
+        
+        const div1 = document.querySelector("#div1"); //creo form dentro div1
+        div1.appendChild(form);  //agrego la card nueva al div
        
+        const cancelarBtn = document.getElementById("cancelar");
+        cancelarBtn.addEventListener('click', function(event) {
+         event.preventDefault
+          // Habilita el botón "Agregar" nuevamente
+          agregarBtn.disabled = false;
+          // Elimina el formulario
+          form.remove();
+      });
+
         form.addEventListener('submit', function (event) { //el boton que envia, evalua si todo esta ok
           event.preventDefault();
           agregarBtn.disabled = false;
-          //IMPORTANTE! estos "id" refieren a los inyectados en el form de arriba (no vienen del html)
+
+       
+          
+          // "id" refieren a los inyectados en el form de arriba 
           const nombreInput = document.getElementById('nombre-input').value.trim();
           const marcaInput = document.getElementById('marca-input').value.trim();
           const precioInput = parseFloat(document.getElementById('precio-input').value);
@@ -115,7 +139,7 @@ function filtrarInventario(){ //funcion para filtrar
           const lugarInput = document.getElementById('lugar-input').value.trim();
           const observacionInput = document.getElementById('observacion-input').value.trim();
       
-          if (isNaN(precioInput) || isNaN(stockInput) || nombreInput === '') { //valido los input
+          if (isNaN(precioInput) || isNaN(stockInput) || nombreInput === ''|| marcaInput === ''|| lugarInput === ''|| observacionInput === '') { //valido los input
             alert('Por favor ingresa valores válidos.');
             return;
           }
@@ -130,11 +154,9 @@ function filtrarInventario(){ //funcion para filtrar
       
           inventario.push(producto); //si no esta en la lista, lo pusheo
       
-      
-    
           //aca agrego el producto creado en el storage
-          localStorage.setItem("productos", JSON.stringify(inventario));
-      
+          localStorage.setItem("Inmueble", JSON.stringify(inventario));
+                
           alert(`Se ha agregado el producto "${producto.nombre}" a la lista.`);
       
           console.table(inventario); //lo muestro por consola
@@ -144,10 +166,7 @@ function filtrarInventario(){ //funcion para filtrar
           
           const resultadoTable = document.getElementById('resultado');
           resultadoTable.innerHTML = ''; // Elimina contenido previo de la tabla
-    
-    
           const newRow = resultadoTable.insertRow();
-        
         // Inserta celdas en la fila
         for (let x in list) {
           const celda = newRow.insertCell();
@@ -171,20 +190,46 @@ function filtrarInventario(){ //funcion para filtrar
             lugarCell.textContent = producto.lugar;
             observacionCell.textContent = producto.observacion;       
           });
+
           form.reset();
           form.remove();
         
       });
-      
-        
+             
         }
     
  
-
-
-
-
-
+       /*function localstorage(){
+          const resultadoTable = document.getElementById('resultado');
+          resultadoTable.innerHTML = ''; // Elimina contenido previo de la tabla
+          const newRow = resultadoTable.insertRow();
+        // Inserta celdas en la fila
+        for (let x in list) {
+          const celda = newRow.insertCell();
+          celda.textContent = list[x];
+        }
+            datosAnalizados.forEach((producto) => {
+            const row = resultadoTable.insertRow();
+            const itemCell = row.insertCell(0);
+            const nombreCell = row.insertCell(1);
+            const marcaCell = row.insertCell(2);
+            const stockCell = row.insertCell(3);
+            const precioCell = row.insertCell(4);
+            const lugarCell = row.insertCell(5);
+            const observacionCell = row.insertCell(6);
+            
+            itemCell.textContent = producto.item;
+            nombreCell.textContent = producto.nombre;
+            marcaCell.textContent = producto.marca;
+            stockCell.textContent = producto.stock;
+            precioCell.textContent = producto.precio;
+            lugarCell.textContent = producto.lugar;
+            observacionCell.textContent = producto.observacion;       
+          });
+                
+        }
+          
+        localstorage()*/
 
 
 
