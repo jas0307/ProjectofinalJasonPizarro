@@ -4,9 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://fonts.googleapis.com/css?family=Nunito&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Overpass&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylesheet.css">
 </head>
 <body>
-    
+    <div class="general">
+        <div class="logo"><a href="#"><img src="img/logo colegio.png" width="70px" height="70px" alt="logo" ></a></div>
+            <div class="menusuperior">
+          <div class="login"></div>
+        </div>
+        <div class="menuizquierdo"><h1><button id="agregar" class="botonagregar">Agregar nuevo producto</button></h1></div>
+        <div class="menucentral" id="menucentral"><h1>Administrador de Inventario</h1>
+            <input type="text" id="filtrarP">
+            <button id="filtrar">Filtrar productos</button><div id="aprod"></div>
+            
+           
+             
+              <table id="resultado" class="horizontal-list">
+                <tr>
+                  <th>Item</th>
+                  <th>Nombre</th>
+                  <th>Marca</th>
+                  <th>Stock</th>
+                  <th>Precio</th>
+                  <th>Lugar</th>
+                  <th>Observación</th>
+                </tr>
+              </table>
+        </div>
+        
+    </div>
     <script src="main.js"></script>
 </body>
 </html>
