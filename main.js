@@ -25,11 +25,10 @@ let inventario = [bien1,bien2,bien3,bien4,bien5,bien6,bien7]
 const datos = localStorage.getItem("Inmueble");
 console.log(datos)
 if (datos) {
-  // Convierte los datos en un array de objetos
+  // convierte los datos en un array de objetos
   const bienesEnLocalStorage = JSON.parse(datos);
-        // Agrega el bien al inventario
-  
-  inventario = bienesEnLocalStorage;
+        // agrega el bien al inventario
+    inventario = bienesEnLocalStorage;
 }
 
   
@@ -39,6 +38,40 @@ filtrarBtn.addEventListener("click", () => {filtrarInventario();});
 const agregarBtn = document.getElementById("agregar");
 agregarBtn.addEventListener("click", () => {agregarProducto();});
 
+const mostrarInventario = document.getElementById("mostrarinv");
+mostrarInventario.addEventListener("click", () => {mostrarInv();});
+
+function mostrarInv(){
+  
+  const resultadoTable = document.getElementById('resultado');
+  resultadoTable.innerHTML = '';
+  const newRow = resultadoTable.insertRow();
+  // Inserta celdas en la fila
+  for (let x in list) {
+    const celda = newRow.insertCell();
+    celda.textContent = list[x];
+  }
+      inventario.forEach((producto) => {
+      const row = resultadoTable.insertRow();
+      const itemCell = row.insertCell(0);
+      const nombreCell = row.insertCell(1);
+      const marcaCell = row.insertCell(2);
+      const stockCell = row.insertCell(3);
+      const precioCell = row.insertCell(4);
+      const lugarCell = row.insertCell(5);
+      const observacionCell = row.insertCell(6);
+      
+      itemCell.textContent = producto.item;
+      nombreCell.textContent = producto.nombre;
+      marcaCell.textContent = producto.marca;
+      stockCell.textContent = producto.stock;
+      precioCell.textContent = producto.precio;
+      lugarCell.textContent = producto.lugar;
+      observacionCell.textContent = producto.observacion;       
+    });
+
+
+}
 
 
 function filtrarInventario(){ //funcion para filtrar
