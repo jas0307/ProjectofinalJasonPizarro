@@ -73,7 +73,7 @@ function mostrarInv(){
       const precioCell = row.insertCell(4);
       const lugarCell = row.insertCell(5);
       const observacionCell = row.insertCell(6);
-      const eliminarCell = row.insertCell(7); // Celda para el botón de eliminar
+      const eliminarCell = row.insertCell(7); 
 
       itemCell.textContent = producto.item;
       nombreCell.textContent = producto.nombre;
@@ -82,27 +82,23 @@ function mostrarInv(){
       precioCell.textContent = producto.precio;
       lugarCell.textContent = producto.lugar;
       observacionCell.textContent = producto.observacion;
-      // Crear un botón de eliminar
-        const eliminarButton = document.createElement("button");
-        eliminarButton.classList.add("elimBtn");
-        const modificarButton = document.createElement("button");
-        modificarButton.classList.add("modBtn");
-        eliminarButton.textContent = "Eliminar";
-        modificarButton.textContent = "Modificar";
-        eliminarButton.addEventListener("click", () => {
-            // Eliminar la fila
-            resultadoTable.deleteRow(row.rowIndex);            
-            // Actualizar el inventario eliminando el elemento correspondiente
-            inventario.splice(index, 1);            
-            // Actualizar el almacenamiento local (localStorage)
-            localStorage.setItem("Inmueble", JSON.stringify(inventario));
-        });
-        modificarButton.addEventListener("click", () => {
-          // Eliminar la fila
-     
+      
+      const eliminarButton = document.createElement("button");
+       eliminarButton.classList.add("elimBtn");
+      const modificarButton = document.createElement("button");
+      modificarButton.classList.add("modBtn");
+      eliminarButton.textContent = "Eliminar";
+      modificarButton.textContent = "Modificar";
+      eliminarButton.addEventListener("click", () => {
+           
+          
+      resultadoTable.deleteRow(row.rowIndex);            
+      inventario.splice(index, 1);            
+      localStorage.setItem("Inmueble", JSON.stringify(inventario));
       });
-        
-        // Agregar el botón a la celda eliminarCell
+       modificarButton.addEventListener("click", () => {
+          
+      });
         eliminarCell.appendChild(eliminarButton);
         eliminarCell.appendChild(modificarButton);
 
