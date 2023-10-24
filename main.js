@@ -52,7 +52,12 @@ function mostrarInv(){
   resultadoTable.innerHTML = '';
   const newRow = resultadoTable.insertRow();
   if(inventario.length === 1){// si no hay items solo estara el default
-    alert('Ingrese nuevo producto');
+    
+    Swal.fire({
+      icon: 'error',
+      title: 'No hay items en Inventario',
+      text: 'Ingrese nuevo producto',
+          })
     }  
  
  if(inventario.length > 0){
@@ -122,7 +127,12 @@ console.log(resultado)
 
     if (inventario.length > 0 ) {        
           if(input === ""){
-          alert('Ingrese valor de busqueda');
+            
+             Swal.fire({
+              icon: 'warning',
+              title: 'Ingrese valores',
+                  })
+          
           return
   }        
           for (let x in list) {
@@ -151,9 +161,13 @@ console.log(resultado)
                 }
               });
           } else {
-            alert('No se encontraron coincidencias');
+            Swal.fire({
+              icon: 'warning',
+              title: 'No se encuentran coincidencias',
+                  })
           }
-      }
+          }
+      
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -171,7 +185,7 @@ console.log(resultado)
 const form = document.createElement('form')
     form.innerHTML = 
     `
-      <div><label for="nombre-input">Nombre:</label>
+      <div><label for="nombre-input">Nombre Inmueble: </label>
       <input id="nombre-input" type="text" required>
      </div> <br>
       <div><label for="marca-input">Marca:</label>
@@ -217,21 +231,34 @@ const div1 = document.querySelector(".modal-content")
           const observacionInput = document.getElementById('observacion-input').value.trim();
       
           if (isNaN(precioInput) || isNaN(stockInput) || stockInput <= 0  || precioInput <= 0 || nombreInput === ''|| marcaInput === ''|| lugarInput === ''|| observacionInput === '') { 
-            alert('Por favor ingresa valores válidos.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Porfavor ingresa valores validos',
+              
+                  })
             return;
           }
       
           const producto = new Inmueble(itemInput,nombreInput,marcaInput, stockInput, precioInput, lugarInput,observacionInput); 
                 
           if (inventario.some((elemento) => elemento.nombre === producto.nombre)) {
-            alert('El producto ya existe en la lista.');
+            Swal.fire({
+              icon: 'error',
+              title: 'El producto ya existe en la lista',
+              
+                  })
             return;
           }
       
           inventario.push(producto); 
           //pusheo y guardo en storage 
-          localStorage.setItem("Inmueble", JSON.stringify(inventario));                
-          alert(`Se ha agregado el producto "${producto.nombre}" a la lista.`)
+          localStorage.setItem("Inmueble", JSON.stringify(inventario));  
+          
+          Swal.fire({
+            icon: 'success',
+            title: `Se ha agregado el producto "${producto.nombre}" a la lista.`,            
+                })
+         
                 
           const resultadoTable = document.getElementById('resultado');
     resultadoTable.innerHTML = ''; 
@@ -266,7 +293,10 @@ const div1 = document.querySelector(".modal-content")
                     
                  }  });
                 } else {
-                  alert('No se encontraron coincidencias');
+                  Swal.fire({
+                    icon: 'warning',
+                    title: 'No se encuentran coincidencias',
+                        })
                 }
                 formModal.style.display = 'none';
                 form.remove();
