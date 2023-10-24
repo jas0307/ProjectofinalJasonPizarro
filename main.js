@@ -168,7 +168,7 @@ console.log(resultado)
           const lugarInput = document.getElementById('lugar-input').value.trim();
           const observacionInput = document.getElementById('observacion-input').value.trim();
       
-          if (isNaN(precioInput) || isNaN(stockInput) || stockInput >=0  || precioInput >=0 || nombreInput === ''|| marcaInput === ''|| lugarInput === ''|| observacionInput === '') { 
+          if (isNaN(precioInput) || isNaN(stockInput) || stockInput <= 0  || precioInput <= 0 || nombreInput === ''|| marcaInput === ''|| lugarInput === ''|| observacionInput === '') { 
             alert('Por favor ingresa valores válidos.');
             return;
           }
