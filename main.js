@@ -21,11 +21,11 @@ inventario.push(bien1)
 
 
 if (inventario.length > 0) {
-  // Intenta cargar datos desde el almacenamiento local
+ 
   const datos = localStorage.getItem("Inmueble");
 
   if (datos !== null && datos !== undefined) {
-    // Si hay datos en localStorage, actualiza el inventario
+    
     const bienesEnLocalStorage = JSON.parse(datos);
     inventario = bienesEnLocalStorage;
   }
