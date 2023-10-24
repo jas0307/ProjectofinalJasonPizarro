@@ -10,49 +10,61 @@ this.lugar=lugar
 this.observacion=observacion
 
 }
+
+const formModal = document.getElementById('modal-container');        
+const closeFormButton = document.getElementById('cerrar-modal');
 //Inventario inicial
-let list = new Inmueble ("Item","Nombre","Marca","Stock","Precio","Lugar","Observación")
-let bien1 = new Inmueble (0,"pc","acer",5,350000,"sala de computacion","sin observación")
-let bien2 = new Inmueble (1,"pc","lenovo",4,450000,"sala de profesores","pc 2 sin pantalla")
-let bien3 = new Inmueble (2,"escritorio","ikea",5,100000,"sala de computacion","sin observación")
-let bien4 = new Inmueble (3,"escritorio","ikea",4,100000,"sala de profesores","2 con rayones")
-let bien5 = new Inmueble (4,"laptop","hp",5,350000,"sala de computacion","1 pantalla quebrada")
-let bien6 = new Inmueble (5,"libro matematicas","santillana",40,35000,"biblioteca","3 libros sin portada")
-let bien7 = new Inmueble (6,"libro ciencias","editorial planeta",39,32000,"biblioteca","1 libro roto")
+let list = new Inmueble ("ID","Nombre","Marca","Stock","Precio","Lugar","Observación")
+let bien1 = new Inmueble (0,"","","","","","")//item 0
+let inventario = []
+inventario.push(bien1)
 
-let inventario = [bien1,bien2,bien3,bien4,bien5,bien6,bien7]
 
-// si no hay datos en inventario los guardo en storage y los paso a inventario
-const datos = localStorage.getItem("Inmueble");
-console.log(datos)
-if (datos) {
+if (inventario.length > 0) {
+  // Intenta cargar datos desde el almacenamiento local
+  const datos = localStorage.getItem("Inmueble");
 
-  const bienesEnLocalStorage = JSON.parse(datos);
-
+  if (datos !== null && datos !== undefined) {
+    // Si hay datos en localStorage, actualiza el inventario
+    const bienesEnLocalStorage = JSON.parse(datos);
     inventario = bienesEnLocalStorage;
+  }
 }
 
-  
+//botones globales
 const filtrarBtn = document.getElementById("filtrar");
 filtrarBtn.addEventListener("click", () => {filtrarInventario();});
 
 const agregarBtn = document.getElementById("agregar");
-agregarBtn.addEventListener("click", () => {agregarProducto();});
+agregarBtn.addEventListener("click", () => {
+  formModal.style.display = 'block';
+  agregarProducto();
+  
+  });
+
 
 const mostrarInventario = document.getElementById("mostrarinv");
 mostrarInventario.addEventListener("click", () => {mostrarInv();});
-
+/////////////////////////////////////////////////////////////////////////////////
 function mostrarInv(){
 //muestro el inventario en la tabla resultado
   const resultadoTable = document.getElementById('resultado');
   resultadoTable.innerHTML = '';
   const newRow = resultadoTable.insertRow();
+  if(inventario.length === 1){// si no hay items solo estara el default
+    alert('Ingrese nuevo producto');
+    }  
  
+ if(inventario.length > 0){
   for (let x in list) {
     const celda = newRow.insertCell();
     celda.textContent = list[x];
+    
   }
-      inventario.forEach((producto) => {
+      inventario.forEach((producto,index) => {
+              
+        if(producto.item > 0){//evito que se cree el item 0
+      
       const row = resultadoTable.insertRow();
       const itemCell = row.insertCell(0);
       const nombreCell = row.insertCell(1);
@@ -61,106 +73,146 @@ function mostrarInv(){
       const precioCell = row.insertCell(4);
       const lugarCell = row.insertCell(5);
       const observacionCell = row.insertCell(6);
-      
+      const eliminarCell = row.insertCell(7); // Celda para el botón de eliminar
+
       itemCell.textContent = producto.item;
       nombreCell.textContent = producto.nombre;
       marcaCell.textContent = producto.marca;
       stockCell.textContent = producto.stock;
       precioCell.textContent = producto.precio;
       lugarCell.textContent = producto.lugar;
-      observacionCell.textContent = producto.observacion;       
+      observacionCell.textContent = producto.observacion;
+      // Crear un botón de eliminar
+        const eliminarButton = document.createElement("button");
+        eliminarButton.classList.add("elimBtn");
+        const modificarButton = document.createElement("button");
+        modificarButton.classList.add("modBtn");
+        eliminarButton.textContent = "Eliminar";
+        modificarButton.textContent = "Modificar";
+        eliminarButton.addEventListener("click", () => {
+            // Eliminar la fila
+            resultadoTable.deleteRow(row.rowIndex);            
+            // Actualizar el inventario eliminando el elemento correspondiente
+            inventario.splice(index, 1);            
+            // Actualizar el almacenamiento local (localStorage)
+            localStorage.setItem("Inmueble", JSON.stringify(inventario));
+        });
+        modificarButton.addEventListener("click", () => {
+          // Eliminar la fila
+     
+      });
+        
+        // Agregar el botón a la celda eliminarCell
+        eliminarCell.appendChild(eliminarButton);
+        eliminarCell.appendChild(modificarButton);
+
+        }    
     });
-
-
+  }
 }
-
+/////////////////////////////////////////////
 
 function filtrarInventario(){ 
   //filtro inventario po nombre
+  
   const input = document.getElementById('filtrarP').value;
   const palabraClave = input.trim().toUpperCase();
   const resultado = inventario.filter((producto) => producto.nombre.toUpperCase().includes(palabraClave));
 console.log(resultado)
+
     const resultadoTable = document.getElementById('resultado');
     resultadoTable.innerHTML = ''; 
-    
-    if (resultado.length > 0 ) {  
     const newRow = resultadoTable.insertRow();
-        if(input === ""){
-        alert('Ingrese valor de busqueda');
-        return
-}
-       
-        for (let x in list) {
-            const celda = newRow.insertCell();
-            celda.textContent = list[x];
+
+    if (inventario.length > 0 ) {        
+          if(input === ""){
+          alert('Ingrese valor de busqueda');
+          return
+  }        
+          for (let x in list) {
+              const celda = newRow.insertCell();
+              celda.textContent = list[x];
+            }
+              resultado.forEach((producto) => {
+               
+               if(producto.item > 0){
+              const row = resultadoTable.insertRow();
+              const itemCell = row.insertCell(0);
+              const nombreCell = row.insertCell(1);
+              const marcaCell = row.insertCell(2);
+              const stockCell = row.insertCell(3);
+              const precioCell = row.insertCell(4);
+              const lugarCell = row.insertCell(5);
+              const observacionCell = row.insertCell(6);
+              
+              itemCell.textContent = producto.item;
+              nombreCell.textContent = producto.nombre;
+              marcaCell.textContent = producto.marca;
+              stockCell.textContent = producto.stock;
+              precioCell.textContent = producto.precio;
+              lugarCell.textContent = producto.lugar;
+              observacionCell.textContent = producto.observacion;
+                }
+              });
+          } else {
+            alert('No se encontraron coincidencias');
           }
-            resultado.forEach((producto) => {
-            const row = resultadoTable.insertRow();
-            const itemCell = row.insertCell(0);
-            const nombreCell = row.insertCell(1);
-            const marcaCell = row.insertCell(2);
-            const stockCell = row.insertCell(3);
-            const precioCell = row.insertCell(4);
-            const lugarCell = row.insertCell(5);
-            const observacionCell = row.insertCell(6);
-            
-            itemCell.textContent = producto.item;
-            nombreCell.textContent = producto.nombre;
-            marcaCell.textContent = producto.marca;
-            stockCell.textContent = producto.stock;
-            precioCell.textContent = producto.precio;
-            lugarCell.textContent = producto.lugar;
-            observacionCell.textContent = producto.observacion;
-            
-          });
-        } else {
-          alert('No se encontraron coincidencias');
-        }
-    }
+      }
 
+/////////////////////////////////////////////////////////////////////////
 
-    function agregarProducto() { 
+    function agregarProducto() {       
       
-      agregarBtn.disabled = true
-
+      
       let ultimoItem = inventario[inventario.length - 1].item 
       let itemInput = ultimoItem +1 
-        const form = document.createElement('form')
-        form.innerHTML = 
-        `
-          <label for="nombre-input">Nombre:</label>
-          <input id="nombre-input" type="text" required>
-          <label for="marca-input">Marca:</label>
-          <input id="marca-input" type="text" required>
-          <label for="stock-input">Stock:</label>
-          <input id="stock-input" type="number" step="1" required>
-          <label for="precio-input">Precio:</label>
-          <input id="precio-input" type="number" step="1" required>
-          <label for="lugar-input">Lugar:</label>
-          <input id="lugar-input" type="text" required>
-          <label for="observacion-input">Observación:</label>
-          <input id="observacion-input" type="text" required>       
-          <button type="submit">Agregar</button>
-          <button id="cancelar">Cancelar</button>
-        `;
-        
-        const div1 = document.querySelector("#div1")
-        div1.appendChild(form)
-       
+
+    closeFormButton.addEventListener('click', () => {
+        formModal.style.display = 'none';
+        form.remove();
+    });
+
+const form = document.createElement('form')
+    form.innerHTML = 
+    `
+      <div><label for="nombre-input">Nombre:</label>
+      <input id="nombre-input" type="text" required>
+     </div> <br>
+      <div><label for="marca-input">Marca:</label>
+      <input id="marca-input" type="text" required></div>
+      <br>
+     <div> <label for="stock-input">Stock:</label>
+      <input id="stock-input" type="number" step="1" required></div>
+      <br>
+     <div> <label for="precio-input">Precio:</label>
+      <input id="precio-input" type="number" step="1" required></div>
+      <br>
+     <div> <label for="lugar-input">Lugar:</label>
+      <input id="lugar-input" type="text" required></div>
+      <br>
+     <div>  <label for="observacion-input">Observación:</label>
+      <textarea id="observacion-input" rows="2" style="resize: none;" required></textarea></div>
+      <br>
+     <button type="submit">Agregar</button>
+      <button id="cancelar">Cancelar</button>
+    `;
+const div1 = document.querySelector(".modal-content")
+    div1.appendChild(form)
+
+
         const cancelarBtn = document.getElementById("cancelar");
         cancelarBtn.addEventListener('click', function(event) {
          event.preventDefault
           //desactivo boton para evitar crear otro formulario
-          agregarBtn.disabled = false;
-         
-          form.remove();
+         /* agregarBtn.disabled = false;
+          mostrarInventario.disabled=false*/
+          formModal.style.display = 'none';
+           form.remove();
       });
 
         form.addEventListener('submit', function (event) {
           event.preventDefault();
-          agregarBtn.disabled = false;
-
+          
           const nombreInput = document.getElementById('nombre-input').value.trim();
           const marcaInput = document.getElementById('marca-input').value.trim();
           const precioInput = parseFloat(document.getElementById('precio-input').value);
@@ -182,226 +234,48 @@ console.log(resultado)
       
           inventario.push(producto); 
           //pusheo y guardo en storage 
-          localStorage.setItem("Inmueble", JSON.stringify(inventario));
-                
+          localStorage.setItem("Inmueble", JSON.stringify(inventario));                
           alert(`Se ha agregado el producto "${producto.nombre}" a la lista.`)
-      
-          console.table(inventario)
-      
-         
-          
-          
-          const resultadoTable = document.getElementById('resultado');
-          resultadoTable.innerHTML = '';
-          const newRow = resultadoTable.insertRow();
-       
-        for (let x in list) {
-          const celda = newRow.insertCell();
-          celda.textContent = list[x];
-        }
-            inventario.forEach((producto) => {
-            const row = resultadoTable.insertRow();
-            const itemCell = row.insertCell(0);
-            const nombreCell = row.insertCell(1);
-            const marcaCell = row.insertCell(2);
-            const stockCell = row.insertCell(3);
-            const precioCell = row.insertCell(4);
-            const lugarCell = row.insertCell(5);
-            const observacionCell = row.insertCell(6);
-            
-            itemCell.textContent = producto.item;
-            nombreCell.textContent = producto.nombre;
-            marcaCell.textContent = producto.marca;
-            stockCell.textContent = producto.stock;
-            precioCell.textContent = producto.precio;
-            lugarCell.textContent = producto.lugar;
-            observacionCell.textContent = producto.observacion;       
-          });
-
-          form.reset();
-          form.remove();
-        
-      });
-             
-        }
-    
- 
-       /*function localstorage(){
-          const resultadoTable = document.getElementById('resultado');
-          resultadoTable.innerHTML = ''; // Elimina contenido previo de la tabla
-          const newRow = resultadoTable.insertRow();
-        // Inserta celdas en la fila
-        for (let x in list) {
-          const celda = newRow.insertCell();
-          celda.textContent = list[x];
-        }
-            datosAnalizados.forEach((producto) => {
-            const row = resultadoTable.insertRow();
-            const itemCell = row.insertCell(0);
-            const nombreCell = row.insertCell(1);
-            const marcaCell = row.insertCell(2);
-            const stockCell = row.insertCell(3);
-            const precioCell = row.insertCell(4);
-            const lugarCell = row.insertCell(5);
-            const observacionCell = row.insertCell(6);
-            
-            itemCell.textContent = producto.item;
-            nombreCell.textContent = producto.nombre;
-            marcaCell.textContent = producto.marca;
-            stockCell.textContent = producto.stock;
-            precioCell.textContent = producto.precio;
-            lugarCell.textContent = producto.lugar;
-            observacionCell.textContent = producto.observacion;       
-          });
                 
-        }
-          
-        localstorage()*/
+          const resultadoTable = document.getElementById('resultado');
+    resultadoTable.innerHTML = ''; 
+          const newRow = resultadoTable.insertRow();
+          console.table(inventario.length)
+          if (inventario.length > 0 ) {        
+              
+                for (let x in list) {
+                    const celda = newRow.insertCell();
+                    celda.textContent = list[x];
+                  }
+                    inventario.forEach((producto) => {
 
-
-/*
-let palabraClave = prompt("ingresa el inmueble que deseas buscar").trim().toUpperCase()
-let resultado = inventario.filter((producto)=> producto.nombre.toUpperCase().includes(palabraClave))
-
-if(resultado.length > 0){
-    let mensaje = "Resultados de la búsqueda:\n"
-    for (let i = 0; i < resultado.length; i++) {
-      mensaje += ` Item: ${resultado[i].item}\n Nombre: ${resultado[i].nombre}\n Marca: ${resultado[i].marca}\n Stock: ${resultado[i].stock}\n Precio: ${resultado[i].precio}\n Lugar: ${resultado[i].lugar}\n Observacion: ${resultado[i].observacion}\n`;
-       alert(mensaje);
-    }
-console.table(resultado)}
-else{
-alert("no se encontro ninguna coincidencia con "+ palabraClave)}
-
-menu()
-}
-
-function agregarProducto(){//funcion para agregar nuevo producto
-
-let ultimoItem = inventario[inventario.length - 1].item
-let item = ultimoItem +1 //aumenta al siguiente item creado
-let nombre = prompt ("ingresa nombre del inmueble").trim()
-let marca = prompt ("ingresa la marca del inmueble").trim()
-let stock = parseInt(prompt("ingresa cantidad"))
-let precio = parseInt(prompt("ingresa precio del inmueble"))
-let lugar = prompt ("ingresa en que lugar se encuentra").trim()
-let observacion = prompt ("ingresa observacion").trim()
-
-if(isNaN(precio)|| isNaN(stock)|| isNaN(item) || nombre ==="" || marca ===""|| lugar ===""|| observacion ===""){
-alert("porfavor ingresa valores validos")
-menu()
-}
-let producto = new Inmueble(item,nombre,marca,stock,precio,lugar,observacion);
-inventario.push(producto)
-
-let nprod = "Nuevo item creado: \n";
-    nprod += ` Item: ${inventario[item].item}\n Nombre: ${inventario[item].nombre}\n Marca: ${inventario[item].marca}\n Stock: ${inventario[item].stock}\n Precio: ${inventario[item].precio}\n Lugar: ${inventario[item].lugar}\n Observacion: ${inventario[item].observacion}\n`;
-     alert(nprod);
-     console.table(inventario)
-     menu()
-}
-
-
-function nuevoStock(){//funcion para agregar nuevo stock
-    console.log("Inventario Actual")
-    console.table(inventario)
-    for (let i = 0; i < inventario.length; i++) {
-        let obj = inventario[i];
-        let mesj =
-          "Item: " + obj.item + "\n" +
-          "Nombre: " + obj.nombre + "\n" +
-          "Marca: " + obj.marca + "\n" +
-          "Stock: " + obj.stock + "\n" +
-          "Precio: " + obj.precio + "\n" +
-          "Lugar: " + obj.lugar + "\n" +
-          "Observación: " + obj.observacion;
-      
-        alert("Información del objeto " + i + ":\n" + mesj);}
-    let valor1 = parseInt(prompt("ingresa item "))
-    let valor2 = parseInt(prompt("ingresa cantidad "))
-    if(isNaN(valor1)|| isNaN(valor2)|| valor1 <= 0 ){
-        alert("porfavor ingresa valores validos")
-        menu()
-        }
-    
-    let stock2 = inventario[valor1].stock
-    let suma = stock2 + valor2
-    if(suma > 0 ){        
-        inventario[valor1].stock = suma
-        console.log(suma)
-        console.log("Nuevo Stock")
-        let nprod = "Nuevo Stock: \n";
-    nprod += ` Item: ${inventario[valor1].item}\n Nombre: ${inventario[valor1].nombre}\n Marca: ${inventario[valor1].marca}\n Stock: ${inventario[valor1].stock}\n Precio: ${inventario[valor1].precio}\n Lugar: ${inventario[valor1].lugar}\n Observacion: ${inventario[valor1].observacion}\n`;
-     alert(nprod);
-        console.table(inventario)}
-     else{
-            alert("No queda stock")
-        }
-    
-        menu()
-}
-
-function nuevoPrecio(){//funcion para agregar nuevo precio a item anterior
-    console.log("Inventario Actual")
-    console.table(inventario)
-    for (let i = 0; i < inventario.length; i++) {
-        let obj = inventario[i];
-        let mesj =
-          "Item: " + obj.item + "\n" +
-          "Nombre: " + obj.nombre + "\n" +
-          "Marca: " + obj.marca + "\n" +
-          "Stock: " + obj.stock + "\n" +
-          "Precio: " + obj.precio + "\n" +
-          "Lugar: " + obj.lugar + "\n" +
-          "Observación: " + obj.observacion;
-      
-        alert("Información del objeto " + i + ":\n" + mesj);}
-    let valor1 = parseInt(prompt("ingresa item "))
-    let valor2 = parseInt(prompt("ingresa cantidad "))
-    if(isNaN(valor1)|| isNaN(valor2)|| valor1 <= 0 || valor2 < 0){
-        alert("porfavor ingresa valores validos")
-        menu()
+                    
+                      if(producto.item > 0){
+                    const row = resultadoTable.insertRow();
+                    const itemCell = row.insertCell(0);
+                    const nombreCell = row.insertCell(1);
+                    const marcaCell = row.insertCell(2);
+                    const stockCell = row.insertCell(3);
+                    const precioCell = row.insertCell(4);
+                    const lugarCell = row.insertCell(5);
+                    const observacionCell = row.insertCell(6);
+                    
+                    itemCell.textContent = producto.item;
+                    nombreCell.textContent = producto.nombre;
+                    marcaCell.textContent = producto.marca;
+                    stockCell.textContent = producto.stock;
+                    precioCell.textContent = producto.precio;
+                    lugarCell.textContent = producto.lugar;
+                    observacionCell.textContent = producto.observacion;
+                    
+                 }  });
+                } else {
+                  alert('No se encontraron coincidencias');
+                }
+                formModal.style.display = 'none';
+                form.remove();
+        
+      });             
         }
 
-    inventario[valor1].precio = valor2
-    console.log(valor2)
-    console.log("Nuevo precio")
-    let nprod = "Nuevo precio: \n";
-    nprod += ` Item: ${inventario[valor1].item}\n Nombre: ${inventario[valor1].nombre}\n Marca: ${inventario[valor1].marca}\n Stock: ${inventario[valor1].stock}\n Precio: ${inventario[valor1].precio}\n Lugar: ${inventario[valor1].lugar}\n Observacion: ${inventario[valor1].observacion}\n`;
-     alert(nprod);
-    console.table(inventario)
-    menu()
-}
-
-function nuevaObservacion(){//funcion para agregar nueva informacion
-    console.log("Inventario Actual")
-    console.table(inventario)
-    for (let i = 0; i < inventario.length; i++) {
-        let obj = inventario[i];
-        let mesj =
-          "Item: " + obj.item + "\n" +
-          "Nombre: " + obj.nombre + "\n" +
-          "Marca: " + obj.marca + "\n" +
-          "Stock: " + obj.stock + "\n" +
-          "Precio: " + obj.precio + "\n" +
-          "Lugar: " + obj.lugar + "\n" +
-          "Observación: " + obj.observacion;
-      
-        alert("Información del objeto " + i + ":\n" + mesj);}
-    let valor1 = parseInt(prompt("ingresa item "))
-    let valor2 = prompt("ingresa nueva Observacion ")
-    if(valor2 ==="" ){
-        alert("porfavor ingresa datos validos")
-        menu()
-        }
- 
-    inventario[valor1].observacion = valor2
-    console.log(valor2)
-    console.log("Nueva Observacion")
-    let nprod = "Nueva Observacion: \n";
-    nprod += ` Item: ${inventario[valor1].item}\n Nombre: ${inventario[valor1].nombre}\n Marca: ${inventario[valor1].marca}\n Stock: ${inventario[valor1].stock}\n Precio: ${inventario[valor1].precio}\n Lugar: ${inventario[valor1].lugar}\n Observacion: ${inventario[valor1].observacion}\n`;
-     alert(nprod);
-    console.table(inventario)
-    menu()
-}
-menu()*/
+   
