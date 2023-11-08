@@ -19,7 +19,7 @@ function verificarCredenciales() {
       title: "Inicio de sesion exitosa!",
     });
     setTimeout(() => {
-      window.location.href = "index.html";
+      window.location.href = "inventario.html";
       sessionStorage.setItem("nombreUsuario", usuario);
       
     }, 2100);
