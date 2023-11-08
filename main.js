@@ -365,9 +365,7 @@ const div1 = document.querySelector(".modal-content")
         const cancelarBtn = document.getElementById("cancelar");
         cancelarBtn.addEventListener('click', function(event) {
          event.preventDefault
-          //desactivo boton para evitar crear otro formulario
-         /* agregarBtn.disabled = false;
-          mostrarInventario.disabled=false*/
+                
           formModal.style.display = 'none';
            form.remove();
       });
@@ -463,7 +461,7 @@ fetch('https://mindicador.cl/api')
     return response.json();
   })
   .then(function(dailyIndicators) {
-    // Create an array of indicator names and values
+    //para crear slide infinito
     const indicators = [
       { name: 'UF', value: dailyIndicators.uf.valor },
       { name: 'Dólar observado', value: dailyIndicators.dolar.valor },
