@@ -22,7 +22,18 @@ inventario.push(bien1)
 
 const nombreUsuario = sessionStorage.getItem("nombreUsuario");
 const nombreUsuarioDiv = document.getElementById("nombreUsuarioDiv");
-const usuarioFormateado = nombreUsuario.charAt(0).toUpperCase() + nombreUsuario.slice(1);
+
+const formatUsuario = (nombreUsuario) => {
+  return new Promise((resolve, reject) => {
+    if (nombreUsuario) {
+      const usuarioFormateado = nombreUsuario.charAt(0).toUpperCase() + nombreUsuario.slice(1);
+      resolve(usuarioFormateado);
+    } else {
+      reject(mostrarMensajeInicioSesion);
+    }
+  });
+};
+
 const mostrarMensajeInicioSesion = () => {
   nombreUsuarioDiv.innerHTML = `
     <div class="divusuario">
@@ -34,29 +45,31 @@ const mostrarMensajeInicioSesion = () => {
   `;
 };
 
-if (nombreUsuario) {
-  nombreUsuarioDiv.innerHTML = `
-    <div>
-      <img src="img/user.png" alt="Logo" width=20px>
-    </div>
-    <div>
-      Bienvenido, ${usuarioFormateado}
-    </div>
-    <div class="salirsesion">
-      <img src="img/salir.png" alt="Logo" width=20px class="salir-imagen"><div class="textosalir">Cerrar sesion</div>
-    </div>
-  `;
+formatUsuario(nombreUsuario)
+  .then((usuarioFormateado) => {
+    nombreUsuarioDiv.innerHTML = `
+      <div>
+        <img src="img/user.png" alt="Logo" width=20px>
+      </div>
+      <div>
+        Bienvenido, ${usuarioFormateado}
+      </div>
+      <div class="salirsesion">
+        <img src="img/salir.png" alt="Logo" width=20px class="salir-imagen"><div class="textosalir">Cerrar sesion</div>
+      </div>
+    `;
 
-  const salirImagen = document.querySelector('.salir-imagen');
-  salirImagen.addEventListener('click', () => {
-  
-    sessionStorage.removeItem('nombreUsuario');
-    
+    const salirImagen = document.querySelector('.salir-imagen');
+    salirImagen.addEventListener('click', () => {
+      sessionStorage.removeItem('nombreUsuario');
+      mostrarMensajeInicioSesion();
+    });
+  })
+  .catch((error) => {
     mostrarMensajeInicioSesion();
+    console.error(error);
   });
-} else {
-  mostrarMensajeInicioSesion();
-}
+
 
 function obtenerInventario() {
   return new Promise((resolve, reject) => {
