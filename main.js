@@ -490,25 +490,26 @@ fetch('https://mindicador.cl/api')
 
 
   function totalInmuebles(){   
-   
-   const resultadoTable = document.getElementById('resultado');
+    const resultadoTable = document.getElementById('resultado');
     resultadoTable.innerHTML = '';
-   
-    let totalPrecio = 0;
+  
+    let totalValorActivos = 0;
+  
     inventario.forEach((item) => {
       const itemPrecio = parseFloat(item.precio);
-      if (!isNaN(itemPrecio)) {
-        totalPrecio += itemPrecio;
+      const itemStock = parseInt(item.stock);
+      
+      if (!isNaN(itemPrecio) && !isNaN(itemStock)) {
+        totalValorActivos += (itemPrecio * itemStock);
       }
     });
   
     const grafico = document.createElement('div');
     grafico.innerHTML = `
-      <h1>Valor total de activos: $${totalPrecio}</h1>
-          `;
+      <h1>Valor total de activos: $${totalValorActivos}</h1>
+    `;
   
-    resultado.appendChild(grafico);
- 
+    resultadoTable.appendChild(grafico);
   }
 
   function totalStock(){   
