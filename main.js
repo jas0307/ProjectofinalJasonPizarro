@@ -261,6 +261,61 @@ const div1 = document.getElementById('div1');
         }    
     });
   }
+
+
+  // Obtener una referencia al elemento div con id "div1"
+const btnpdf = document.getElementById('div1');
+
+// Crear un elemento de botón
+const button = document.createElement('button');
+button.id = 'generarPDF'; // Establecer el id del botón
+button.textContent = 'Generar PDF'; // Establecer el texto del botón
+
+// Agregar el botón como un hijo del div
+btnpdf.appendChild(button);
+  document.getElementById("generarPDF").addEventListener("click", function () {
+    const doc = new jsPDF();
+    doc.text("Tabla de Inmuebles", 10, 10);
+
+    // Definir las coordenadas iniciales para la tabla
+    let x = 10;
+    let y = 20;
+
+    // Definir el ancho de columna
+    const columnWidths = [12, 27, 27, 27, 27, 27, 30]; // Ancho personalizado para cada columna
+    const fontSize = 8;
+
+    // Dibujar encabezados de tabla
+    let headers = Object.keys(inventario[0]);
+    headers.forEach((header, i) => {
+        doc.setFontSize(10);
+        doc.rect(x, y, columnWidths[i], 10);
+        doc.text(header, x + 2, y + 6);
+        x += columnWidths[i];
+    });
+
+    x = 10;
+    y += 10;
+    doc.setFontSize(fontSize);
+
+    // Dibujar los datos de los objetos Inmueble
+    inventario.slice(1).forEach(id => { // Cambiar "item" por "id"
+      Object.values(id).forEach((cell, i) => {
+          doc.rect(x, y, columnWidths[i], 10);
+          doc.text(cell.toString(), x + 2, y + 6);
+          x += columnWidths[i];
+      });
+      x = 10;
+      y += 10;
+  });
+  
+
+    doc.save("tabla_inmuebles.pdf");
+});
+
+
+
+
 }
 /////////////////////////////////////////////
 
