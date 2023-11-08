@@ -40,7 +40,7 @@ const mostrarMensajeInicioSesion = () => {
       No has iniciado sesión.
     </div>
     <div>
-      <p><a href="Index.html">Inicia sesión</a></p>
+      <p><a href="index.html">Inicia sesión</a></p>
     </div>
   `;
 };
